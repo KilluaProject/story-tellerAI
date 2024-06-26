@@ -26,7 +26,7 @@ async function runScript(){
     setRunStarted(true);
     setRunFinished(false);
     
-    const response = await fetch ('api/run-script/', {
+    const response = await fetch ('/api/run-script', {
         method:'POST',
         headers: {
             'Content-Type' : 'application/json',

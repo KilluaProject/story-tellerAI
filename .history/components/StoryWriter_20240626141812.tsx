@@ -26,14 +26,14 @@ async function runScript(){
     setRunStarted(true);
     setRunFinished(false);
     
-    const response = await fetch ('api/run-script/', {
+    const response = await fetch ('/api/run-script', {
         method:'POST',
         headers: {
             'Content-Type' : 'application/json',
         },
-        body: JSON.stringify({story, pages, path: storiesPath}),
+        body: JSON.stringify({story, pages, path: storiesPath})
 
-    });
+    })
 
     if (response.ok && response.body) {
         // handle strem for the api
@@ -118,8 +118,7 @@ async function runScript(){
         <Button
         disabled = {!story || !pages || runStarted }
         onClick={runScript}
-        className='w-full'>Buat cerita
-        </Button>
+        className='w-full'>Buat cerita</Button>
     </section>
 
     <section className='flex-1 mt-5'>

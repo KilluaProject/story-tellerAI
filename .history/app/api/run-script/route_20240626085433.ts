@@ -6,10 +6,9 @@ const script = "app/api/run-script/story-book.gpt";
 
 export async function POST(request: NextRequest) {
     const {story, pages, path} = await request.json();
-
     const opts:RunOpts ={
         disableCache: true,
-        input: `--${story} --${pages} --${path}`,
+        input: `--${story}, --${pages}, --${path}`
     };
     try{
         const encoder = new TextEncoder();
@@ -37,7 +36,7 @@ export async function POST(request: NextRequest) {
             headers: {
                 "Content-Type": "text/event-stream",
                 "Cache-Control": "no-cache",
-                Connection: "keep-alive",                
+                "Connection": "keep-alive",                
             }
         })
 

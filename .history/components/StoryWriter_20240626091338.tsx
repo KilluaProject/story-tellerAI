@@ -4,8 +4,8 @@ import React, { useState } from 'react'
 import { Textarea } from './ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { Button } from './ui/button'
-import { Frame } from '@gptscript-ai/gptscript'
-import renderEventMessage from '@/lib/renderEventMessage'
+import { handler } from 'tailwindcss-animate'
+import { read } from 'fs'
 
 
 const storiesPath = "public/stories"
@@ -19,21 +19,20 @@ const [progress, setProgress] =useState("")
 const [runStarted, setRunStarted] = useState<boolean>(false)
 const [runFinished, setRunFinished] = useState<boolean | null >(null)
 const [currentTools, setCurrentTols] = useState("")
-const [events, setEvents] = useState<Frame[]>([])
 
 
 async function runScript(){
     setRunStarted(true);
     setRunFinished(false);
     
-    const response = await fetch ('api/run-script/', {
+    const response = await fetch ('/api/run-script', {
         method:'POST',
         headers: {
             'Content-Type' : 'application/json',
         },
-        body: JSON.stringify({story, pages, path: storiesPath}),
+        body: JSON.stringify({story, pages, path: storiesPath})
 
-    });
+    })
 
     if (response.ok && response.body) {
         // handle strem for the api
@@ -60,36 +59,11 @@ async function runScript(){
 
             const eventData = chunk
             .split("\n\n")
-            .filter((line) => line.startsWith("event:"))
-            .map((line) => line.replace(/^event:/,""))
-
-            eventData.forEach(data => {
-                try {
-
-                    const parsedData = JSON.parse(data);
-                     
-
-                    if (parsedData.type === "callProgress") {
-                        setProgress(
-                            parsedData.output[parsedData.output.length - 1].content
-                        );
-                        setCurrentTols(parsedData.tool?.description || "");
-                    }  else if ( parsedData.type === 'callStarted'){
-                        setCurrentTols(parsedData.tool?.description || "");
-                    } else if ( parsedData.type === 'runFinish'){
-                       setRunFinished(true);
-                       setRunStarted(false);
-                    } else {
-                        setEvents((prevEvent) => [...prevEvent, parsedData]);
-                    }
-
-                    
-                } catch (error) {
-                    console.log("error bang", error)
-                }
-            })
+            .filter((line) => line.startsWith("event :"))
+            .map((line) => line.replace(/^event: /. ""));
         }
     }
+
   return (
    <div className='container flex flex-col'>
     <section className='flex flex-1 flex-col border border-purple-400 p-5 rounded-md gap-4'>
@@ -118,8 +92,7 @@ async function runScript(){
         <Button
         disabled = {!story || !pages || runStarted }
         onClick={runScript}
-        className='w-full'>Buat cerita
-        </Button>
+        className='w-full'>Buat cerita</Button>
     </section>
 
     <section className='flex-1 mt-5'>
@@ -141,15 +114,6 @@ async function runScript(){
                     {currentTools}
                 </div>
             )} 
-
-            <div className='gap-5'>
-                {events.map((event, index) => (
-                    <div className='mr-5' key={index}>
-                        <span>{">>"}</span>
-                        {renderEventMessage(event)}
-                    </div>
-                ))}
-            </div>
 
             {runStarted && (
                 <div>

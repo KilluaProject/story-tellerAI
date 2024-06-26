@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
 
     const opts:RunOpts ={
         disableCache: true,
-        input: `--${story} --${pages} --${path}`,
+        input: `--${story} --${pages} --${path}`
     };
     try{
         const encoder = new TextEncoder();
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
             headers: {
                 "Content-Type": "text/event-stream",
                 "Cache-Control": "no-cache",
-                Connection: "keep-alive",                
+                "Connection": "keep-alive",                
             }
         })
 
